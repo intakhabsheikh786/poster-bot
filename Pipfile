@@ -4,11 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-telebot = "*"
 requests = "*"
 gunicorn = "*"
+pytelegrambotapi = "*"
 
 [dev-packages]
+py-mon = "*"
+watchdog = "*"
 
 [requires]
 python_version = "3.10"

@@ -25,7 +25,8 @@ def handle_download_card(message):
             bot.send_photo(chat_id=message.chat.id, photo=response.content)
         else:
             bot.send_message(chat_id=message.chat.id, text="Failed to get image: ")
-    except:
+    except Exception as e:
+           print(e)
            bot.send_message(chat_id=message.chat.id, text="Something wrong with logic.")
 
 @bot.message_handler(func=lambda message: True)
