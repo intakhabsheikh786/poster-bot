@@ -32,4 +32,6 @@ def handle_download_card(message):
 def show_options(message):
     bot.reply_to(message, "Welcome! I am your bot, will help you to get chart.\n")
 
-bot.polling()
+
+if __name__ == '__main__':
+    bot.polling()
