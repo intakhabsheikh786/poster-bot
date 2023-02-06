@@ -35,4 +35,5 @@ def show_options(message):
 
 
 if __name__ == '__main__':
+    print("bot started....")
     bot.polling()
