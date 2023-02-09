@@ -28,6 +28,6 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 5000
 
 # Define the command to run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "index:app"]
+CMD ["gunicorn", "-w", "4", "index:app"]
 
 
