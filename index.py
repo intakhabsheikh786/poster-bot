@@ -38,9 +38,12 @@ def send_message(message):
             return None
         print("response type is other than text")
         requests.post(ACTION_URL, json={"chat_id": chat_id, "action": "uploading_photo"})
-        response = bot.send_photo(chat_id=chat_id, photo=response)
-        bot.close()
-        print("Bot closed")
+        files = {"photo": ("image.jpg", response, "image/jpeg")}
+        data = {"chat_id": chat_id}
+    
+        # Make the API request
+        response = requests.post(PHOTO_URL, files=files, data=data)
+        print(response.content)
     except Exception as e:
         print(e)
         requests.post(TEXT_URL, json={"chat_id": chat_id, "text": response})
