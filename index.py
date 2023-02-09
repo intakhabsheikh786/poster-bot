@@ -56,6 +56,9 @@ def handle_command():
     try:
         print("request recieved....")
         print(BOT_TOKEN)
+        print(ACTION_URL)
+        print(TEXT_URL)
+        print(PHOTO_URL)
         update = request.get_json()
         chat_id = update['message']['chat']['id']
         message = update['message']['text']
