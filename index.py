@@ -17,10 +17,9 @@ app = Flask(__name__)
 
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-TEXT_URL = os.getenv('TEXT_URL')
-PHOTO_URL = os.getenv('PHOTO_URL')
-ACTION_URL = os.getenv('ACTION_URL')
-
+TEXT_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+PHOTO_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
+ACTION_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendChatAction"
 
 def send_message(message):
     chat_id = message.get("chat_id", "default_value")
