@@ -16,10 +16,6 @@ RUN apk add --no-cache --virtual .build-deps build-base && \
 COPY . .
 
 
-RUN addgroup app && adduser -S -G app app
-
-USER app
-
 #Set environment variable
 ENV URL=https://poster-api-zjej.onrender.com/download-chart/
 ENV PORT=5000
@@ -27,6 +23,7 @@ ENV TEXT_URL=https://api.telegram.org/bot${BOT_TOKEN}/sendMessage
 ENV PHOTO_URL=https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto
 ENV ACTION_URL=https://api.telegram.org/bot${BOT_TOKEN}/sendChatAction
 ENV FLASK_APP=index.py
+ENV PYTHONUNBUFFERED=1
 
 EXPOSE 5000
 

@@ -27,8 +27,6 @@ def send_message(message):
     try:
         text_message = message.get("type")
         response = message.get("response", "response")
-        bot = telebot.TeleBot(BOT_TOKEN)
-        print(BOT_TOKEN)
         if text_message == "text":
             print("response type is text")
             requests.post(ACTION_URL, json={"chat_id": chat_id, "action": "typing"})
@@ -45,8 +43,14 @@ def send_message(message):
         response = requests.post(PHOTO_URL, files=files, data=data)
         print(response.content)
     except Exception as e:
+        print("exception in send message")
         print(e)
         requests.post(TEXT_URL, json={"chat_id": chat_id, "text": response})
+
+
+@app.route("/", methods=["GET"])
+def handle_home():
+    return "Working"
 
 @app.route('/', methods=['POST'])
 def handle_command():
@@ -71,6 +75,7 @@ def handle_command():
         print("response sent")
         return "OK" , 200
     except Exception as e:
+        print("exception in handle_command")
         print(e)
         return "Internal server error in main" , 502
     

@@ -63,8 +63,10 @@ class DownloadCommand(Command):
                     return {"response": response.content, "type" : "photo"} 
                 return {"response": response.content, "type" : "text"} 
             except Exception as e: 
+                print("Something failed while calling poster api")
                 print(e)       
                 return {"response": "Something failed while calling poster api", "type" : "text"} 
         except Exception as e:
             print("Something failed while splitting the data")
+            print(e)
             return {"response": "Something failed while splitting the data", "type" : "text"} 
