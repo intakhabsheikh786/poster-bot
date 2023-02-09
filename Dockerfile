@@ -16,13 +16,12 @@ RUN apk add --no-cache --virtual .build-deps build-base && \
 COPY . .
 
 
-# RUN addgroup app && adduser -S -G app app
+RUN addgroup app && adduser -S -G app app
 
-# USER app
+USER app
 
 #Set environment variable
 ENV URL=https://poster-api-zjej.onrender.com/download-chart/
-ENV BOT_TOKEN=6085972993:AAFc8Vibup_2vZP1lueN5ABqywwrkEEY8DQ
 ENV PORT=5000
 ENV TEXT_URL=https://api.telegram.org/bot${BOT_TOKEN}/sendMessage
 ENV PHOTO_URL=https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto
