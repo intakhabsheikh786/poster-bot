@@ -1,39 +1,76 @@
-import telebot
 import os
 import requests
-TOKEN = os.getenv("TELEBOT_TOKEN", "No token provided")
-URL = os.getenv("URL", "http://localhost:3000/download-chart")
-bot = telebot.TeleBot(TOKEN)
+import telebot
+from flask import Flask, request
 
-@bot.message_handler(commands=["test"])
-def send_welcome(message):
-    bot.reply_to(message, "Working.....")
+from command import StartCommand, HelpCommand, DefaultCommand, DownloadCommand, TotalCommand, LimitCommand
 
-@bot.message_handler(commands=['download'])
-def handle_download_card(message):
+commands = {
+    "/start": StartCommand,
+    "/help": HelpCommand,
+    "/download" : DownloadCommand,
+    "/total" : TotalCommand,
+    "/limit" : LimitCommand
+}
+
+app = Flask(__name__)
+
+
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+TEXT_URL = os.getenv('TEXT_URL')
+PHOTO_URL = os.getenv('PHOTO_URL')
+ACTION_URL = os.getenv('ACTION_URL')
+
+
+def send_message(message):
+    chat_id = message.get("chat_id", "default_value")
     try:
-        # Get the input text from the user's message
-        date = message.text.split("\n")[1]
-        data = message.text.split("\n")[2].split(",")
-        # Make a POST request to the API endpoint
-        response = requests.post(URL, json={"date": date, "data" : data})
-
-        print(response.status_code)
-        # Check that the request was successful
-        if response.status_code == 200:
-            # Send the PNG image to the user as a photo
-            bot.send_photo(chat_id=message.chat.id, photo=response.content)
-        else:
-            bot.send_message(chat_id=message.chat.id, text="Failed to get image: ")
+        text_message = message.get("type")
+        response = message.get("response", "response")
+        bot = telebot.TeleBot(BOT_TOKEN)
+        print(BOT_TOKEN)
+        if text_message == "text":
+            print("response type is text")
+            requests.post(ACTION_URL, json={"chat_id": chat_id, "action": "typing"})
+            response = requests.post(TEXT_URL, json={"chat_id": chat_id, "text": response})
+            if response.status_code != 200:
+                print(response.content)
+            return None
+        print("response type is other than text")
+        requests.post(ACTION_URL, json={"chat_id": chat_id, "action": "uploading_photo"})
+        response = bot.send_photo(chat_id=chat_id, photo=response)
+        bot.close()
+        print("Bot closed")
     except Exception as e:
-           print(e)
-           bot.send_message(chat_id=message.chat.id, text="Something wrong with logic.")
+        print(e)
+        requests.post(TEXT_URL, json={"chat_id": chat_id, "text": response})
 
-@bot.message_handler(func=lambda message: True)
-def show_options(message):
-    bot.reply_to(message, "Welcome! I am your bot, will help you to get chart.\n")
+@app.route('/', methods=['POST'])
+def handle_command():
+    try:
+        print("request recieved....")
+        update = request.get_json()
+        chat_id = update['message']['chat']['id']
+        message = update['message']['text']
 
+        command = commands.get(message.split("\n")[0], DefaultCommand)
+        
+        print("command loaded")
+        
+        response = command(message).get_response(message)
+        
+        print("command executed")
+        
+        response["chat_id"] = chat_id
+        
+        send_message(response)
+        
+        print("response sent")
+        return "OK" , 200
+    except Exception as e:
+        print(e)
+        return "Internal server error in main" , 502
+    
 
 if __name__ == '__main__':
-    print("bot started....")
-    bot.polling()
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
